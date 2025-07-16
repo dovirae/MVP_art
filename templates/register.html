@@ -10,20 +10,77 @@
             <div class="card-body">
                 <p>QR 코드 스캔이 완료되었습니다.</p>
                 
-                <form action="{{ url_for('register') }}" method="post">
-                    <input type="hidden" name="nft_id" value="{{ nft_id }}">
-                    
-                    <div class="mb-3 text-center">
-                        <img src="{{ url_for('static', filename='images/4324325200111223.png') }}" alt="NFT 이미지" class="img-fluid" style="max-width: 100%; height: auto;">
+                <!-- 일반 폼 -->
+                <div id="registration-form">
+                    <form id="nft-form" action="{{ url_for('register') }}" method="post">
+                        <input type="hidden" name="nft_id" value="{{ nft_id }}">
+                        
+                        <div class="mb-3 text-center">
+                            <img src="{{ url_for('static', filename='images/4324325200111223.png') }}" alt="NFT 이미지" class="img-fluid" style="max-width: 100%; height: auto;">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="button" id="register-btn" class="btn btn-primary">정품인증/등록하기</button>
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">취소</a>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- 로딩 화면 -->
+                <div id="loading-screen" class="text-center d-none">
+                    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">로딩 중...</span>
                     </div>
-                    
+                    <p class="lead">Verisart 채널 및 NFT 네트워크에 인증 및 등록 진행중입니다</p>
+                </div>
+                
+                <!-- 완료 화면 -->
+                <div id="completion-screen" class="text-center d-none">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="mb-3">해당 아트픽셀은 정품인증이 완료되었습니다</h4>
+                    <p class="text-muted mb-4">Verisart 채널 / XRP 네트워크 등록완료</p>
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">정품인증/등록하기</button>
-                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">취소</a>
+                        <button type="button" id="confirm-btn" class="btn btn-success">확인</button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const registrationForm = document.getElementById('registration-form');
+        const loadingScreen = document.getElementById('loading-screen');
+        const completionScreen = document.getElementById('completion-screen');
+        const registerBtn = document.getElementById('register-btn');
+        const confirmBtn = document.getElementById('confirm-btn');
+        const nftForm = document.getElementById('nft-form');
+        
+        // 등록 버튼 클릭 시
+        registerBtn.addEventListener('click', function() {
+            // 폼 화면 숨기기
+            registrationForm.classList.add('d-none');
+            
+            // 로딩 화면 표시
+            loadingScreen.classList.remove('d-none');
+            
+            // 3초 후 완료 화면 표시
+            setTimeout(function() {
+                loadingScreen.classList.add('d-none');
+                completionScreen.classList.remove('d-none');
+            }, 3000);
+        });
+        
+        // 확인 버튼 클릭 시
+        confirmBtn.addEventListener('click', function() {
+            // 폼 제출
+            nftForm.submit();
+        });
+    });
+</script>
 {% endblock %}

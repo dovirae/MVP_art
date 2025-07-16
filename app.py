@@ -49,7 +49,7 @@ def register():
             # 고유번호 대신 NFT ID를 키로 사용
             registered_nfts[nft_id] = {"wallet_id": wallet_id, "nft_id": nft_id}
             
-            return redirect(url_for('success', wallet_id=wallet_id))
+            return redirect(url_for('wallet', wallet_id=wallet_id))
     
     # GET 요청이거나 등록 실패 시
     nft_id = request.args.get('nft_id', '')
