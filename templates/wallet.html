@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">내 NFT 지갑</h2>
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">지갑 정보</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>지갑 ID:</strong> {{ wallet_id }}</p>
+                <p>이 ID를 저장해두세요. 이 ID를 사용하여 언제든지 지갑에 접근할 수 있습니다.</p>
+            </div>
+        </div>
+        
+        <h3 class="mb-3">보유 중인 NFT</h3>
+        {% if nfts %}
+        <div class="row">
+            {% for nft in nfts %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename=nft.image) }}" class="card-img-top" alt="{{ nft.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ nft.name }}</h5>
+                        <p class="card-text"><small class="text-muted">등록일: {{ nft.registered_at }}</small></p>
+                        <button class="btn btn-sm btn-outline-primary view-nft" data-bs-toggle="modal" data-bs-target="#nftModal" data-nft-id="{{ nft.id }}" data-nft-name="{{ nft.name }}" data-nft-image="{{ nft.image }}">자세히 보기</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            현재 보유 중인 NFT가 없습니다.
+        </div>
+        {% endif %}
+        
+        <div class="mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">홈으로</a>
+        </div>
+    </div>
+</div>
+
+<!-- NFT 상세 모달 -->
+<div class="modal fade" id="nftModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="nftModalTitle">NFT 상세 정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="nftModalImage" src="" class="img-fluid mb-3" alt="NFT 이미지">
+                <h5 id="nftModalName"></h5>
+                <p class="text-muted">이 NFT는 블록체인에 안전하게 등록되어 있으며 당신의 소유권이 보장됩니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // NFT 모달 데이터 설정
+        document.querySelectorAll('.view-nft').forEach(button => {
+            button.addEventListener('click', function() {
+                const nftId = this.getAttribute('data-nft-id');
+                const nftName = this.getAttribute('data-nft-name');
+                const nftImage = this.getAttribute('data-nft-image');
+                
+                document.getElementById('nftModalName').textContent = nftName;
+                document.getElementById('nftModalImage').src = `/static/${nftImage}`;
+                document.getElementById('nftModalImage').alt = nftName;
+            });
+        });
+    });
+</script>
+{% endblock %}

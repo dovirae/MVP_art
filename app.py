@@ -1,0 +1,76 @@
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+import os
+import uuid
+import json
+from datetime import datetime
+
+app = Flask(__name__)
+
+# 임시 데이터 저장소 (실제 프로덕션에서는 데이터베이스를 사용해야 함)
+registered_nfts = {}
+user_wallets = {}
+
+# 샘플 NFT 이미지 목록 (실제로는 동적으로 로드하거나 DB에서 가져올 수 있음)
+sample_nfts = [
+    {"id": "nft001", "name": "디지털 아트 #1", "image": "images/nft1.jpg"},
+    {"id": "nft002", "name": "디지털 아트 #2", "image": "images/nft2.jpg"},
+    {"id": "nft003", "name": "디지털 아트 #3", "image": "images/nft3.jpg"}
+]
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/scan')
+def scan():
+    return render_template('scan.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        unique_id = request.form.get('unique_id')
+        nft_id = request.form.get('nft_id')
+        
+        # 고유번호 검증 (실제로는 더 복잡한 검증 로직이 필요)
+        if unique_id and nft_id:
+            # 사용자 지갑 ID 생성 (실제로는 블록체인 지갑 연동 필요)
+            wallet_id = str(uuid.uuid4())[:8]
+            
+            # 선택된 NFT 찾기
+            selected_nft = next((nft for nft in sample_nfts if nft["id"] == nft_id), None)
+            
+            if selected_nft:
+                # 사용자 지갑에 NFT 추가
+                if wallet_id not in user_wallets:
+                    user_wallets[wallet_id] = []
+                
+                # NFT에 타임스탬프 추가
+                nft_with_timestamp = selected_nft.copy()
+                nft_with_timestamp["registered_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                
+                user_wallets[wallet_id].append(nft_with_timestamp)
+                registered_nfts[unique_id] = {"wallet_id": wallet_id, "nft_id": nft_id}
+                
+                return redirect(url_for('success', wallet_id=wallet_id))
+    
+    # GET 요청이거나 등록 실패 시
+    nft_id = request.args.get('nft_id', '')
+    return render_template('register.html', nft_id=nft_id)
+
+@app.route('/success')
+def success():
+    wallet_id = request.args.get('wallet_id', '')
+    if wallet_id in user_wallets:
+        nfts = user_wallets[wallet_id]
+        return render_template('success.html', wallet_id=wallet_id, nfts=nfts)
+    return redirect(url_for('index'))
+
+@app.route('/wallet/<wallet_id>')
+def wallet(wallet_id):
+    if wallet_id in user_wallets:
+        nfts = user_wallets[wallet_id]
+        return render_template('wallet.html', wallet_id=wallet_id, nfts=nfts)
+    return redirect(url_for('index'))
+
+if __name__ == '__main__':
+    app.run(debug=True)

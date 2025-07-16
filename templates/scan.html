@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    #qr-video {
+        width: 100%;
+        max-width: 500px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+    }
+    .scanner-container {
+        position: relative;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .scanner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 2px solid #5cb85c;
+        border-radius: 5px;
+        box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h2 class="mb-4">QR 코드 스캔</h2>
+        <p>아래 카메라를 사용하여 QR 코드를 스캔하세요.</p>
+        
+        <div class="scanner-container mb-4">
+            <video id="qr-video" playsinline autoplay></video>
+            <div class="scanner-overlay"></div>
+        </div>
+        
+        <div id="loading" class="d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">로딩 중...</span>
+            </div>
+            <p>QR 코드 처리 중...</p>
+        </div>
+        
+        <div id="error-message" class="alert alert-danger d-none" role="alert">
+            카메라를 사용할 수 없습니다. 카메라 접근 권한을 확인하세요.
+        </div>
+        
+        <!-- 개발 테스트용 버튼 -->
+        <div class="mt-4">
+            <p class="text-muted">카메라가 작동하지 않는 경우 아래 버튼을 사용하세요:</p>
+            <button id="test-button" class="btn btn-secondary">테스트 QR 코드 시뮬레이션</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const qrVideo = document.getElementById('qr-video');
+        const loadingElement = document.getElementById('loading');
+        const errorMessageElement = document.getElementById('error-message');
+        const testButton = document.getElementById('test-button');
+        
+        // HTML5 QR 코드 스캐너 초기화
+        const html5QrCode = new Html5Qrcode("qr-video");
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            // QR 코드 스캔 성공
+            console.log(`QR 코드 스캔 성공: ${decodedText}`);
+            html5QrCode.stop();
+            
+            // 로딩 표시
+            loadingElement.classList.remove('d-none');
+            
+            // 여기서는 QR 코드가 NFT ID를 포함한다고 가정
+            // 실제로는 QR 코드 내용에 따라 다른 처리가 필요할 수 있음
+            setTimeout(() => {
+                // 테스트를 위해 지연 추가
+                window.location.href = `/register?nft_id=${decodedText}`;
+            }, 1500);
+        };
+        
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+        
+        // 카메라 시작
+        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+            .catch((err) => {
+                console.error("QR 코드 스캐너 시작 실패:", err);
+                errorMessageElement.classList.remove('d-none');
+            });
+            
+        // 테스트 버튼 이벤트
+        testButton.addEventListener('click', function() {
+            // 테스트용 NFT ID
+            const testNftId = "nft001";
+            loadingElement.classList.remove('d-none');
+            
+            setTimeout(() => {
+                window.location.href = `/register?nft_id=${testNftId}`;
+            }, 1500);
+        });
+    });
+</script>
+{% endblock %}
