@@ -8,19 +8,17 @@
                 <h3 class="mb-0">NFT 등록</h3>
             </div>
             <div class="card-body">
-                <p>QR 코드 스캔이 완료되었습니다. 등록을 완료하려면 고유번호를 입력하세요.</p>
+                <p>QR 코드 스캔이 완료되었습니다.</p>
                 
                 <form action="{{ url_for('register') }}" method="post">
                     <input type="hidden" name="nft_id" value="{{ nft_id }}">
                     
-                    <div class="mb-3">
-                        <label for="unique_id" class="form-label">고유번호</label>
-                        <input type="text" class="form-control" id="unique_id" name="unique_id" required>
-                        <div class="form-text">제품과 함께 제공된 고유번호를 입력하세요.</div>
+                    <div class="mb-3 text-center">
+                        <img src="{{ url_for('static', filename='images/4324325200111223.png') }}" alt="NFT 이미지" class="img-fluid" style="max-width: 100%; height: auto;">
                     </div>
                     
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">등록하기</button>
+                        <button type="submit" class="btn btn-primary">ㅈ등록하기</button>
                         <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">취소</a>
                     </div>
                 </form>

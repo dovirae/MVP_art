@@ -28,30 +28,28 @@ def scan():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        unique_id = request.form.get('unique_id')
         nft_id = request.form.get('nft_id')
         
-        # 고유번호 검증 (실제로는 더 복잡한 검증 로직이 필요)
-        if unique_id and nft_id:
-            # 사용자 지갑 ID 생성 (실제로는 블록체인 지갑 연동 필요)
-            wallet_id = str(uuid.uuid4())[:8]
+        # 사용자 지갑 ID 생성 (실제로는 블록체인 지갑 연동 필요)
+        wallet_id = str(uuid.uuid4())[:8]
+        
+        # 선택된 NFT 찾기
+        selected_nft = next((nft for nft in sample_nfts if nft["id"] == nft_id), None)
+        
+        if selected_nft:
+            # 사용자 지갑에 NFT 추가
+            if wallet_id not in user_wallets:
+                user_wallets[wallet_id] = []
             
-            # 선택된 NFT 찾기
-            selected_nft = next((nft for nft in sample_nfts if nft["id"] == nft_id), None)
+            # NFT에 타임스킬프 추가
+            nft_with_timestamp = selected_nft.copy()
+            nft_with_timestamp["registered_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             
-            if selected_nft:
-                # 사용자 지갑에 NFT 추가
-                if wallet_id not in user_wallets:
-                    user_wallets[wallet_id] = []
-                
-                # NFT에 타임스탬프 추가
-                nft_with_timestamp = selected_nft.copy()
-                nft_with_timestamp["registered_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                
-                user_wallets[wallet_id].append(nft_with_timestamp)
-                registered_nfts[unique_id] = {"wallet_id": wallet_id, "nft_id": nft_id}
-                
-                return redirect(url_for('success', wallet_id=wallet_id))
+            user_wallets[wallet_id].append(nft_with_timestamp)
+            # 고유번호 대신 NFT ID를 키로 사용
+            registered_nfts[nft_id] = {"wallet_id": wallet_id, "nft_id": nft_id}
+            
+            return redirect(url_for('success', wallet_id=wallet_id))
     
     # GET 요청이거나 등록 실패 시
     nft_id = request.args.get('nft_id', '')
