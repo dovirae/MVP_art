@@ -2,27 +2,27 @@
 
 {% block head %}
 <style>
-    #qr-video {
+    #qr-reader {
         width: 100%;
         max-width: 500px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
+        margin: 0 auto;
+    }
+    #qr-reader img {
+        width: 100% !important;
+    }
+    #qr-reader video {
+        width: 100% !important;
+        height: auto !important;
     }
     .scanner-container {
         position: relative;
         max-width: 500px;
         margin: 0 auto;
     }
-    .scanner-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border: 2px solid #5cb85c;
-        border-radius: 5px;
-        box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.3);
-        pointer-events: none;
+    #camera-permission-button {
+        margin: 20px auto;
+        padding: 10px 20px;
+        font-size: 16px;
     }
 </style>
 {% endblock %}
@@ -31,12 +31,11 @@
 <div class="row justify-content-center">
     <div class="col-md-8 text-center">
         <h2 class="mb-4">QR 코드 스캔</h2>
-        <p>아래 카메라를 사용하여 QR 코드를 스캔하세요.</p>
+        <p>아래 버튼을 클릭하여 카메라를 활성화하고 QR 코드를 스캔하세요.</p>
         
-        <div class="scanner-container mb-4">
-            <video id="qr-video" playsinline autoplay></video>
-            <div class="scanner-overlay"></div>
-        </div>
+        <button id="camera-permission-button" class="btn btn-primary">카메라 활성화</button>
+        
+        <div id="qr-reader" class="mb-4"></div>
         
         <div id="loading" class="d-none">
             <div class="spinner-border text-primary" role="status">
@@ -59,20 +58,29 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const qrVideo = document.getElementById('qr-video');
         const loadingElement = document.getElementById('loading');
         const errorMessageElement = document.getElementById('error-message');
         const testButton = document.getElementById('test-button');
+        const cameraPermissionButton = document.getElementById('camera-permission-button');
         
-        // HTML5 QR 코드 스캐너 초기화
-        const html5QrCode = new Html5Qrcode("qr-video");
-        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+        let html5QrCode;
+        
+        // QR 코드 스캔 성공 콜백
+        function onScanSuccess(decodedText, decodedResult) {
             // QR 코드 스캔 성공
             console.log(`QR 코드 스캔 성공: ${decodedText}`);
-            html5QrCode.stop();
+            
+            // QR 스캐너 중지
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    console.log("QR 코드 스캐너가 중지되었습니다.");
+                }).catch((err) => {
+                    console.error("QR 코드 스캐너 중지 실패:", err);
+                });
+            }
             
             // 로딩 표시
             loadingElement.classList.remove('d-none');
@@ -83,17 +91,67 @@
                 // 테스트를 위해 지연 추가
                 window.location.href = `/register?nft_id=${decodedText}`;
             }, 1500);
-        };
+        }
         
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-        
-        // 카메라 시작
-        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-            .catch((err) => {
-                console.error("QR 코드 스캐너 시작 실패:", err);
-                errorMessageElement.classList.remove('d-none');
-            });
+        // 카메라 권한 요청 및 QR 스캐너 시작
+        cameraPermissionButton.addEventListener('click', function() {
+            // 버튼 비활성화
+            cameraPermissionButton.disabled = true;
+            cameraPermissionButton.textContent = "카메라 활성화 중...";
             
+            // HTML5 QR 코드 스캐너 초기화
+            html5QrCode = new Html5Qrcode("qr-reader");
+            
+            // 카메라 목록 가져오기
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    // 카메라 ID 선택 (일반적으로 후면 카메라가 더 나중에 나열됨)
+                    const cameraId = devices[devices.length - 1].id;
+                    
+                    const config = {
+                        fps: 10,
+                        qrbox: { width: 250, height: 250 },
+                        aspectRatio: 1.0
+                    };
+                    
+                    // QR 스캐너 시작
+                    html5QrCode.start(
+                        cameraId, 
+                        config, 
+                        onScanSuccess,
+                        (errorMessage) => {
+                            // 오류는 무시 (지속적인 스캔 중 오류 메시지)
+                        }
+                    ).then(() => {
+                        console.log("QR 코드 스캐너가 시작되었습니다.");
+                        // 버튼 숨기기
+                        cameraPermissionButton.style.display = "none";
+                    }).catch(err => {
+                        console.error("QR 코드 스캐너 시작 실패:", err);
+                        errorMessageElement.classList.remove('d-none');
+                        errorMessageElement.textContent = "카메라를 시작할 수 없습니다. 카메라 접근 권한을 확인하세요.";
+                        // 버튼 다시 활성화
+                        cameraPermissionButton.disabled = false;
+                        cameraPermissionButton.textContent = "카메라 활성화 다시 시도";
+                    });
+                } else {
+                    console.error("카메라를 찾을 수 없습니다.");
+                    errorMessageElement.classList.remove('d-none');
+                    errorMessageElement.textContent = "이 기기에서 카메라를 찾을 수 없습니다.";
+                    // 버튼 다시 활성화
+                    cameraPermissionButton.disabled = false;
+                    cameraPermissionButton.textContent = "카메라 활성화 다시 시도";
+                }
+            }).catch(err => {
+                console.error("카메라 목록 가져오기 실패:", err);
+                errorMessageElement.classList.remove('d-none');
+                errorMessageElement.textContent = "카메라 접근 권한이 거부되었습니다. 브라우저 설정에서 카메라 권한을 허용해주세요.";
+                // 버튼 다시 활성화
+                cameraPermissionButton.disabled = false;
+                cameraPermissionButton.textContent = "카메라 활성화 다시 시도";
+            });
+        });
+        
         // 테스트 버튼 이벤트
         testButton.addEventListener('click', function() {
             // 테스트용 NFT ID
