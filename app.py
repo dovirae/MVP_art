@@ -72,5 +72,22 @@ def wallet(wallet_id):
         return render_template('wallet.html', wallet_id=wallet_id, nfts=nfts)
     return redirect(url_for('index'))
 
+@app.route('/API/reg/<nft_code>')
+def api_register(nft_code):
+    """외부 QR 코드에서 호출할 API 엔드포인트
+    QR 코드에 이 URL을 포함시켜 스캔하면 register.html로 리디렉션됩니다.
+    """
+    # NFT 코드 검증 (실제로는 더 복잡한 검증 로직이 필요)
+    # 여기서는 간단히 코드가 존재하는지만 확인
+    if nft_code:
+        # 코드에서 NFT ID 추출 (예: 첫 6자리)
+        nft_id = f"nft{nft_code[:3]}"
+        
+        # 등록 페이지로 리디렉션
+        return redirect(url_for('register', nft_id=nft_id))
+    
+    # 유효하지 않은 코드인 경우 메인 페이지로 리디렉션
+    return redirect(url_for('index'))
+
 if __name__ == '__main__':
     app.run(debug=True)
