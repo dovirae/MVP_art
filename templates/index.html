@@ -1,42 +1,99 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8 text-center">
-        <h1 class="display-4 mb-4">NFT 아트 등록 시스템</h1>
-        <p class="lead">QR 코드를 스캔하고 고유번호를 입력하여 NFT 아트를 등록하세요.</p>
-        
-        <div class="mt-5">
-            <a href="{{ url_for('scan') }}" class="btn btn-primary btn-lg">QR 코드 스캔하기</a>
+<!-- 메인 헤더 섹션 -->
+<div class="main-header">
+    <div class="container">
+        <h1 class="display-4">NFT 아트 등록</h1>
+        <p class="lead mb-4">QR 코드를 스캔하고 고유번호를 입력하여 NFT 아트를 등록하세요</p>
+        <a href="{{ url_for('scan') }}" class="btn btn-light btn-lg">
+            <i class="fas fa-qrcode me-2"></i>QR 코드 스캔하기
+        </a>
+    </div>
+</div>
+
+<!-- 기능 설명 섹션 -->
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2>간편한 3단계로 NFT 등록하기</h2>
+            <p class="text-muted">누구나 쉽게 사용할 수 있는 NFT 등록 시스템</p>
         </div>
         
-        <div class="row mt-5">
-            <h3 class="mb-4">사용 방법</h3>
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">1. QR 코드 스캔</h5>
-                        <p class="card-text">카메라로 QR 코드를 스캔합니다.</p>
-                    </div>
+        <div class="col-md-4 mb-4">
+            <div class="card feature-card h-100">
+                <div class="feature-icon">
+                    <i class="fas fa-qrcode"></i>
                 </div>
+                <h4>1. QR 코드 스캔</h4>
+                <p class="text-muted">모바일 카메라로 작품에 부착된 QR 코드를 스캔합니다</p>
             </div>
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">2. 고유번호 입력</h5>
-                        <p class="card-text">제공받은 고유번호를 입력하여 인증합니다.</p>
-                    </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card feature-card h-100">
+                <div class="feature-icon">
+                    <i class="fas fa-key"></i>
                 </div>
+                <h4>2. 고유번호 입력</h4>
+                <p class="text-muted">작품과 함께 제공된 고유번호를 입력하여 인증합니다</p>
             </div>
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">3. NFT 등록 완료</h5>
-                        <p class="card-text">NFT가 지갑에 등록되고 확인할 수 있습니다.</p>
-                    </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card feature-card h-100">
+                <div class="feature-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h4>3. NFT 등록 완료</h4>
+                <p class="text-muted">NFT가 지갑에 등록되고 언제든지 확인할 수 있습니다</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 샘플 NFT 섹션 -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2>인기 NFT 작품</h2>
+            <p class="text-muted">현재 인기 있는 NFT 작품들을 확인해보세요</p>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="nft-card">
+                <img src="{{ url_for('static', filename='images/nft1.jpg') }}" alt="NFT 작품 1">
+                <div class="nft-card-body">
+                    <h5 class="nft-title">디지털 아트 #128</h5>
+                    <p class="nft-info">아티스트: 김민수</p>
                 </div>
             </div>
         </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="nft-card">
+                <img src="{{ url_for('static', filename='images/nft2.jpg') }}" alt="NFT 작품 2">
+                <div class="nft-card-body">
+                    <h5 class="nft-title">미래 풍경 #045</h5>
+                    <p class="nft-info">아티스트: 이지현</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="nft-card">
+                <img src="{{ url_for('static', filename='images/nft3.jpg') }}" alt="NFT 작품 3">
+                <div class="nft-card-body">
+                    <h5 class="nft-title">추상 컬렉션 #372</h5>
+                    <p class="nft-info">아티스트: 박준호</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 시작하기 버튼 -->
+    <div class="text-center mb-5">
+        <a href="{{ url_for('scan') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-rocket me-2"></i>지금 시작하기
+        </a>
     </div>
 </div>
 {% endblock %}

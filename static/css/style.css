@@ -1,33 +1,99 @@
 /* 전체 스타일 */
+:root {
+    --primary-color: #9966ff; /* 보라색 메인 컬러 */
+    --secondary-color: #7733ff; /* 더 진한 보라색 */
+    --accent-color: #ffcc00; /* 노란색 액센트 */
+    --background-color: #f2e6ff; /* 연한 보라색 배경 */
+    --card-bg-color: #ffffff; /* 카드 배경색 */
+    --text-color: #333333; /* 기본 텍스트 색상 */
+    --light-text: #ffffff; /* 밝은 텍스트 색상 */
+}
+
 body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Poppins', 'Noto Sans KR', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 0;
+    margin: 0;
 }
 
 .container {
     flex: 1;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 /* 헤더 스타일 */
+.navbar {
+    background-color: var(--primary-color) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px 0;
+}
+
 .navbar-brand {
     font-weight: bold;
+    color: var(--light-text) !important;
+    font-size: 1.5rem;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--light-text) !important;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* 푸터 스타일 */
 .footer {
     margin-top: auto;
+    background-color: var(--primary-color) !important;
+    color: var(--light-text);
+    padding: 20px 0;
+}
+
+.footer .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
 /* 카드 스타일 */
 .card {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: var(--card-bg-color);
+    margin-bottom: 25px;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    font-weight: bold;
+    border-bottom: none;
+    padding: 15px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    color: var(--primary-color);
+    font-weight: 600;
 }
 
 /* NFT 이미지 스타일 */
@@ -37,29 +103,125 @@ body {
 }
 
 /* 버튼 스타일 */
+.btn {
+    border-radius: 30px;
+    padding: 10px 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
 .btn-primary {
-    background-color: #4e73df;
-    border-color: #4e73df;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 10px rgba(153, 102, 255, 0.3);
 }
 
 .btn-primary:hover {
-    background-color: #2e59d9;
-    border-color: #2653d4;
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    box-shadow: 0 6px 15px rgba(153, 102, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+    color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    color: var(--secondary-color);
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-size: 1.1rem;
 }
 
 /* 모달 스타일 */
 .modal-content {
-    border-radius: 10px;
+    border-radius: 20px;
+    border: none;
+    overflow: hidden;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
 }
 
 #nftModalImage {
     max-height: 300px;
     object-fit: contain;
+    border-radius: 10px;
 }
 
 /* QR 스캔 페이지 스타일 */
-.scanner-container {
+#qr-reader {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    background-color: white;
     margin-bottom: 30px;
+}
+
+#camera-permission-button {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 10px rgba(153, 102, 255, 0.3);
+    margin: 20px auto;
+    padding: 12px 30px;
+    font-size: 1rem;
+    border-radius: 30px;
+}
+
+/* 폼 스타일 */
+.form-control {
+    border-radius: 15px;
+    padding: 12px 20px;
+    border: 1px solid #e0e0e0;
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(153, 102, 255, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+/* 알림 스타일 */
+.alert {
+    border-radius: 15px;
+    border: none;
+    padding: 15px 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.alert-success {
+    background-color: #d1fae5;
+    color: #047857;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.alert-danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
 }
 
 /* 애니메이션 효과 */
@@ -68,6 +230,87 @@ body {
     to { opacity: 1; }
 }
 
-.alert-success {
-    animation: fadeIn 1s ease-in-out;
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .btn-lg {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+    
+    h1.display-4 {
+        font-size: 2.5rem;
+    }
 }
+
+/* 메인 페이지 특별 스타일 */
+.main-header {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    padding: 40px 20px;
+    border-radius: 0 0 30px 30px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.main-header h1 {
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.feature-card {
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+/* NFT 카드 스타일 */
+.nft-card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.nft-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.nft-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.nft-card-body {
+    padding: 20px;
+    background-color: white;
+}
+
+.nft-title {
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.nft-info {
+    color: #666;
+    font-size: 0.9rem;
+}
+
