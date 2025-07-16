@@ -71,40 +71,41 @@
             // QR 코드 스캔 성공
             console.log(`QR 코드 스캔 성공: ${decodedText}`);
             
-            // 유효한 URL 형식인지 확인 (https://mvp-art.onrender.com/API/reg/...)
-            if (decodedText.startsWith('https://mvp-art.onrender.com/API/reg/')) {
-                // QR 스캐너 중지
-                if (html5QrCode) {
-                    html5QrCode.stop().then(() => {
-                        console.log("QR 코드 스캐너가 중지되었습니다.");
-                    }).catch((err) => {
-                        console.error("QR 코드 스캐너 중지 실패:", err);
-                    });
+            // QR 코드 스캐너 중지
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    console.log("QR 코드 스캐너가 중지되었습니다.");
+                }).catch((err) => {
+                    console.error("QR 코드 스캐너 중지 실패:", err);
+                });
+            }
+            
+            // 로딩 표시
+            loadingElement.classList.remove('d-none');
+            invalidQrMessageElement.classList.add('d-none'); // 오류 메시지 숨기기
+            
+            // QR 코드 처리 로직
+            setTimeout(() => {
+                // 테스트를 위해 지연 추가
+                
+                // 1. API/reg/ 형식이 포함된 URL인 경우 (정확한 도메인 관계없이 패턴만 확인)
+                if (decodedText.includes('/API/reg/')) {
+                    console.log('외부 API URL 감지:', decodedText);
+                    window.location.href = decodedText;
+                    return;
                 }
                 
-                // 로딩 표시
-                loadingElement.classList.remove('d-none');
-                invalidQrMessageElement.classList.add('d-none'); // 오류 메시지 숨기기
-                
-                // URL 형식 처리
-                setTimeout(() => {
-                    // 테스트를 위해 지연 추가
+                // 2. 완전한 URL인 경우 (http:// 또는 https:// 로 시작)
+                if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
+                    console.log('URL 감지:', decodedText);
                     window.location.href = decodedText;
-                }, 1500);
-            } else {
-                // 잘못된 QR 코드인 경우
-                console.log('잘못된 QR 코드 형식:', decodedText);
+                    return;
+                }
                 
-                // 오류 메시지 표시
-                invalidQrMessageElement.classList.remove('d-none');
-                
-                // 3초 후 오류 메시지 숨기기
-                setTimeout(() => {
-                    invalidQrMessageElement.classList.add('d-none');
-                }, 3000);
-                
-                // 카메라 재시작 없이 계속 스캔 진행 (이미 스캔 중이믰로 재시작할 필요 없음)
-            }
+                // 3. NFT ID로 간주하고 등록 페이지로 이동
+                console.log('NFT ID 감지:', decodedText);
+                window.location.href = `/register?nft_id=${decodedText}`;
+            }, 1500);
         }
         
         // 카메라 권한 요청 및 QR 스캐너 시작
