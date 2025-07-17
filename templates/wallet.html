@@ -64,7 +64,51 @@
                 <p class="text-muted">이 NFT는 블록체인에 안전하게 등록되어 있으며 당신의 소유권이 보장됩니다.</p>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="transferOwnershipBtn">소유권 이전하기</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 소유권 이전 모달 -->
+<div class="modal fade" id="transferModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">소유권 이전신청</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>소유권 이전신청할 상대방의 email을 입력해주세요.</p>
+                <div class="mb-3">
+                    <input type="email" class="form-control" id="transferEmail" placeholder="이메일 주소">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="confirmTransferBtn">확인</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 소유권 이전 진행 모달 -->
+<div class="modal fade" id="transferProgressModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-4">
+                <div id="transferLoading">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5>소유권 이전 신청중입니다</h5>
+                </div>
+                <div id="transferComplete" style="display: none;">
+                    <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
+                    <h5>소유권 이전 신청이 완료되었습니다</h5>
+                    <button type="button" class="btn btn-primary mt-3" id="transferDoneBtn">확인</button>
+                </div>
             </div>
         </div>
     </div>
@@ -73,6 +117,8 @@
 
 {% block scripts %}
 <script>
+let currentNftId = '';
+
 function copyWalletId() {
     // 입력창에서 지갑 ID 가져오기
     var walletIdInput = document.getElementById('walletIdInput');
@@ -95,7 +141,7 @@ function copyWalletId() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // NFT 모달 데이터 설정
+    // NFT 모달 데이터 표시
     document.querySelectorAll('.view-nft').forEach(button => {
         button.addEventListener('click', function() {
             const nftId = this.getAttribute('data-nft-id');
@@ -105,8 +151,63 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('nftModalName').textContent = nftName;
             document.getElementById('nftModalImage').src = `/static/${nftImage}`;
             document.getElementById('nftModalImage').alt = nftName;
-            });
+            
+            // 현재 선택된 NFT ID 저장
+            currentNftId = nftId;
         });
     });
+
+    // 소유권 이전 버튼 클릭 이벤트
+    document.getElementById('transferOwnershipBtn').addEventListener('click', function() {
+        // NFT 모달 닫기
+        bootstrap.Modal.getInstance(document.getElementById('nftModal')).hide();
+        
+        // 이메일 입력 모달 표시
+        var transferModal = new bootstrap.Modal(document.getElementById('transferModal'));
+        transferModal.show();
+    });
+
+    // 이메일 확인 버튼 클릭 이벤트
+    document.getElementById('confirmTransferBtn').addEventListener('click', function() {
+        const email = document.getElementById('transferEmail').value.trim();
+        
+        if (!email) {
+            alert('이메일을 입력해주세요.');
+            return;
+        }
+        
+        // 이메일 형식 검증
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('유효한 이메일 주소를 입력해주세요.');
+            return;
+        }
+        
+        // 확인 메시지 표시
+        if (confirm('소유권 이전신청할 상대방의 email을 \'' + email + '\'로 입력하셨습니다. \n\n확인하시겠습니까?')) {
+            // 이메일 입력 모달 닫기
+            bootstrap.Modal.getInstance(document.getElementById('transferModal')).hide();
+            
+            // 진행 모달 표시
+            var progressModal = new bootstrap.Modal(document.getElementById('transferProgressModal'));
+            progressModal.show();
+            
+            // 로딩 표시 후 3초 뒤에 완료 메시지 표시
+            setTimeout(function() {
+                document.getElementById('transferLoading').style.display = 'none';
+                document.getElementById('transferComplete').style.display = 'block';
+            }, 3000);
+        }
+    });
+
+    // 완료 버튼 클릭 이벤트
+    document.getElementById('transferDoneBtn').addEventListener('click', function() {
+        // 진행 모달 닫기
+        bootstrap.Modal.getInstance(document.getElementById('transferProgressModal')).hide();
+        
+        // 메인 페이지로 이동
+        window.location.href = '/';
+    });
+});
 </script>
 {% endblock %}
