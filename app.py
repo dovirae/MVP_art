@@ -6,29 +6,58 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# 임시 데이터 저장소 (실제 프로덕션에서는 데이터베이스를 사용해야 함)
-registered_nfts = {}
+# JSON 파일 경로 설정
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+NFT_DATA_FILE = os.path.join(DATA_DIR, 'nfts.json')
+WALLET_DATA_FILE = os.path.join(DATA_DIR, 'wallets.json')
 
 # XRP 테스트 지갑 ID 미리 생성
 TEST_WALLET_ID = "rP3X7h7oC7vX9k9z8b9m9n9p9q9r9s9t9u"
 
-# 사용자 지갑 저장소
-user_wallets = {
-    TEST_WALLET_ID: [
-        {
-            "id": "nft001",
-            "name": "디지털 아트 #1",
-            "image": "images/nft1.jpg",
-            "registered_at": "2025-07-17 08:30:00"
-        },
-        {
-            "id": "4324325200111223",
-            "name": "DOVIARAE 아트픽셀",
-            "image": "images/4324325200111223.png",
-            "registered_at": "2025-07-17 09:00:00"
-        }
-    ]
-}
+# 데이터 디렉토리 생성
+os.makedirs(DATA_DIR, exist_ok=True)
+
+# JSON 파일에서 데이터 로드
+def load_nfts():
+    if os.path.exists(NFT_DATA_FILE):
+        with open(NFT_DATA_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {}
+
+def load_wallets():
+    if os.path.exists(WALLET_DATA_FILE):
+        with open(WALLET_DATA_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    # 기본 테스트 지갑 데이터
+    return {
+        TEST_WALLET_ID: [
+            {
+                "id": "nft001",
+                "name": "디지털 아트 #1",
+                "image": "images/nft1.jpg",
+                "registered_at": "2025-07-17 08:30:00"
+            },
+            {
+                "id": "4324325200111223",
+                "name": "DOVIARAE 아트픽셀",
+                "image": "images/4324325200111223.png",
+                "registered_at": "2025-07-17 09:00:00"
+            }
+        ]
+    }
+
+# JSON 파일에 데이터 저장
+def save_nfts(data):
+    with open(NFT_DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+def save_wallets(data):
+    with open(WALLET_DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+# 데이터 초기화
+registered_nfts = load_nfts()
+user_wallets = load_wallets()
 
 # 샘플 NFT 이미지 목록 (실제로는 동적으로 로드하거나 DB에서 가져올 수 있음)
 sample_nfts = [
@@ -68,6 +97,10 @@ def register():
             user_wallets[wallet_id].append(nft_with_timestamp)
             # 고유번호 대신 NFT ID를 키로 사용
             registered_nfts[nft_id] = {"wallet_id": wallet_id, "nft_id": nft_id}
+            
+            # JSON 파일에 저장
+            save_wallets(user_wallets)
+            save_nfts(registered_nfts)
             
             return redirect(url_for('wallet', wallet_id=wallet_id))
     
