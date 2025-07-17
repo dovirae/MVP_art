@@ -33,7 +33,7 @@ def load_wallets():
         TEST_WALLET_ID: [
             {
                 "id": "nft001",
-                "name": "디지털 아트 #1",
+                "name": "DOVIARAE 아트픽셀001",
                 "image": "images/nft1.jpg",
                 "registered_at": "2025-07-17 08:30:00"
             },
@@ -61,9 +61,10 @@ user_wallets = load_wallets()
 
 # 샘플 NFT 이미지 목록 (실제로는 동적으로 로드하거나 DB에서 가져올 수 있음)
 sample_nfts = [
-    {"id": "nft001", "name": "디지털 아트 #1", "image": "images/nft1.jpg"},
-    {"id": "nft002", "name": "디지털 아트 #2", "image": "images/nft2.jpg"},
-    {"id": "nft003", "name": "디지털 아트 #3", "image": "images/nft3.jpg"}
+    {"id": "nft001", "name": "DOVIARAE 아트픽셀001", "image": "images/nft1.jpg"},
+    {"id": "nft002", "name": "DOVIARAE 아트픽셀002", "image": "images/nft2.jpg"},
+    {"id": "nft003", "name": "DOVIARAE 아트픽셀003", "image": "images/nft3.jpg"},
+    {"id": "4324325200111223", "name": "DOVIARAE 아트픽셀", "image": "images/4324325200111223.png"}
 ]
 
 @app.route('/')
