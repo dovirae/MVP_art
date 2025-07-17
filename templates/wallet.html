@@ -9,8 +9,16 @@
                 <h5 class="mb-0">지갑 정보</h5>
             </div>
             <div class="card-body">
-                <p><strong>지갑 ID:</strong> {{ wallet_id }}</p>
-                <p>이 ID를 저장해두세요. 이 ID를 사용하여 언제든지 지갑에 접근할 수 있습니다.</p>
+                <div class="mb-3">
+                    <h5 class="text-primary">XRP 지갑 ID:</h5>
+                    <div class="input-group">
+                        <input type="text" class="form-control form-control-lg" value="{{ wallet_id }}" id="walletIdInput" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyWalletId()"><i class="fas fa-copy"></i> 복사</button>
+                    </div>
+                </div>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> 이 ID를 저장해두세요. 이 ID를 사용하여 언제든지 지갑에 접근할 수 있습니다.
+                </div>
             </div>
         </div>
         
@@ -65,17 +73,38 @@
 
 {% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // NFT 모달 데이터 설정
-        document.querySelectorAll('.view-nft').forEach(button => {
-            button.addEventListener('click', function() {
-                const nftId = this.getAttribute('data-nft-id');
-                const nftName = this.getAttribute('data-nft-name');
-                const nftImage = this.getAttribute('data-nft-image');
-                
-                document.getElementById('nftModalName').textContent = nftName;
-                document.getElementById('nftModalImage').src = `/static/${nftImage}`;
-                document.getElementById('nftModalImage').alt = nftName;
+function copyWalletId() {
+    // 입력창에서 지갑 ID 가져오기
+    var walletIdInput = document.getElementById('walletIdInput');
+    
+    // 입력창 선택
+    walletIdInput.select();
+    walletIdInput.setSelectionRange(0, 99999); // 모바일용
+    
+    // 클립보드에 복사
+    navigator.clipboard.writeText(walletIdInput.value)
+        .then(() => {
+            // 복사 성공 시 알림
+            alert('XRP 지갑 ID가 클립보드에 복사되었습니다.');
+        })
+        .catch(err => {
+            // 오류 발생 시
+            console.error('클립보드 복사 오류:', err);
+            alert('클립보드 복사에 실패했습니다. 직접 선택해서 복사해주세요.');
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // NFT 모달 데이터 설정
+    document.querySelectorAll('.view-nft').forEach(button => {
+        button.addEventListener('click', function() {
+            const nftId = this.getAttribute('data-nft-id');
+            const nftName = this.getAttribute('data-nft-name');
+            const nftImage = this.getAttribute('data-nft-image');
+            
+            document.getElementById('nftModalName').textContent = nftName;
+            document.getElementById('nftModalImage').src = `/static/${nftImage}`;
+            document.getElementById('nftModalImage').alt = nftName;
             });
         });
     });

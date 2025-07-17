@@ -8,7 +8,27 @@ app = Flask(__name__)
 
 # 임시 데이터 저장소 (실제 프로덕션에서는 데이터베이스를 사용해야 함)
 registered_nfts = {}
-user_wallets = {}
+
+# XRP 테스트 지갑 ID 미리 생성
+TEST_WALLET_ID = "rP3X7h7oC7vX9k9z8b9m9n9p9q9r9s9t9u"
+
+# 사용자 지갑 저장소
+user_wallets = {
+    TEST_WALLET_ID: [
+        {
+            "id": "nft001",
+            "name": "디지털 아트 #1",
+            "image": "images/nft1.jpg",
+            "registered_at": "2025-07-17 08:30:00"
+        },
+        {
+            "id": "4324325200111223",
+            "name": "DOVIARAE 아트픽셀",
+            "image": "images/4324325200111223.png",
+            "registered_at": "2025-07-17 09:00:00"
+        }
+    ]
+}
 
 # 샘플 NFT 이미지 목록 (실제로는 동적으로 로드하거나 DB에서 가져올 수 있음)
 sample_nfts = [
@@ -30,8 +50,8 @@ def register():
     if request.method == 'POST':
         nft_id = request.form.get('nft_id')
         
-        # 사용자 지갑 ID 생성 (실제로는 블록체인 지갑 연동 필요)
-        wallet_id = str(uuid.uuid4())[:8]
+        # 테스트를 위해 고정된 지갑 ID 사용
+        wallet_id = TEST_WALLET_ID
         
         # 선택된 NFT 찾기
         selected_nft = next((nft for nft in sample_nfts if nft["id"] == nft_id), None)
