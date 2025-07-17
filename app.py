@@ -3,6 +3,7 @@ import os
 import uuid
 import json
 from datetime import datetime
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 app = Flask(__name__)
 
@@ -15,7 +16,11 @@ WALLET_DATA_FILE = os.path.join(DATA_DIR, 'wallets.json')
 TEST_WALLET_ID = "rP3X7h7oC7vX9k9z8b9m9n9p9q9r9s9t9u"
 
 # 데이터 디렉토리 생성
-os.makedirs(DATA_DIR, exist_ok=True)
+try:
+    os.makedirs(DATA_DIR, exist_ok=True)
+    print(f"DATA_DIR created at: {DATA_DIR}")
+except Exception as e:
+    print(f"Error creating DATA_DIR: {e}")
 
 # JSON 파일에서 데이터 로드
 def load_nfts():
@@ -34,7 +39,7 @@ def load_wallets():
             {
                 "id": "nft001",
                 "name": "DOVIARAE 아트픽셀001",
-                "image": "images/nft1.jpg",
+                "image": "images/nft1.png",
                 "registered_at": "2025-07-17 08:30:00"
             },
             {
@@ -48,22 +53,43 @@ def load_wallets():
 
 # JSON 파일에 데이터 저장
 def save_nfts(data):
-    with open(NFT_DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    try:
+        # 디렉토리가 존재하는지 한 번 더 확인
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(NFT_DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+        print(f"NFT data saved to {NFT_DATA_FILE}")
+        print(f"Saved NFT data: {data}")
+    except Exception as e:
+        print(f"Error saving NFT data: {e}")
 
 def save_wallets(data):
-    with open(WALLET_DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    try:
+        # 디렉토리가 존재하는지 한 번 더 확인
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(WALLET_DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+        print(f"Wallet data saved to {WALLET_DATA_FILE}")
+        print(f"Saved wallet data: {data}")
+    except Exception as e:
+        print(f"Error saving wallet data: {e}")
 
 # 데이터 초기화
-registered_nfts = load_nfts()
-user_wallets = load_wallets()
+try:
+    registered_nfts = load_nfts()
+    print(f"Loaded NFT data: {registered_nfts}")
+    user_wallets = load_wallets()
+    print(f"Loaded wallet data: {user_wallets}")
+except Exception as e:
+    print(f"Error loading data: {e}")
+    registered_nfts = {}
+    user_wallets = {}
 
 # 샘플 NFT 이미지 목록 (실제로는 동적으로 로드하거나 DB에서 가져올 수 있음)
 sample_nfts = [
-    {"id": "nft001", "name": "DOVIARAE 아트픽셀001", "image": "images/nft1.jpg"},
-    {"id": "nft002", "name": "DOVIARAE 아트픽셀002", "image": "images/nft2.jpg"},
-    {"id": "nft003", "name": "DOVIARAE 아트픽셀003", "image": "images/nft3.jpg"},
+    {"id": "nft001", "name": "DOVIARAE 아트픽셀001", "image": "images/nft1.png"},
+    {"id": "nft002", "name": "DOVIARAE 아트픽셀002", "image": "images/nft2.png"},
+    {"id": "nft003", "name": "DOVIARAE 아트픽셀003", "image": "images/nft3.png"},
     {"id": "4324325200111223", "name": "DOVIARAE 아트픽셀", "image": "images/4324325200111223.png"}
 ]
 
